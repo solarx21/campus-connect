@@ -30,6 +30,12 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/rooms', roomRoutes);
+app.use('/api/reports', require('./routes/reports'));
+
+// Health check endpoint for monitoring
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
 
 // Error handling middleware
 app.use(errorHandler);
@@ -57,13 +63,20 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 5000;
 
-mongoose.connect(process.env.MONGODB_URI!)
-  .then(() => {
+// Enhanced MongoDB connection with retry logic for scalability
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI!);
     console.log('Connected to MongoDB');
-    server.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error('Database connection error:', error);
-  });
+    // Retry connection after 5 seconds for production resilience
+    setTimeout(connectDB, 5000);
+  }
+};
+
+connectDB();
+
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

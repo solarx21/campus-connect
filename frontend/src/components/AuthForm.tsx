@@ -15,6 +15,8 @@ export default function AuthForm({ onAuthSuccess }: AuthFormProps) {
     year: '',
     branch: ''
   });
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verificationToken, setVerificationToken] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -41,6 +43,7 @@ export default function AuthForm({ onAuthSuccess }: AuthFormProps) {
           onAuthSuccess(data.user);
         } else {
           setMessage('Registration successful! Please check your email for verification.');
+          setIsVerifying(true);
         }
       } else {
         setMessage(data.message);
@@ -59,19 +62,76 @@ export default function AuthForm({ onAuthSuccess }: AuthFormProps) {
     });
   };
 
+  const handleVerifyEmail = async () => {
+    if (!verificationToken.trim()) return;
+
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/verify-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token: verificationToken }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage('Email verified successfully! You can now log in.');
+        setIsVerifying(false);
+        setIsLogin(true);
+      } else {
+        setMessage(data.message);
+      }
+    } catch (error) {
+      setMessage('Verification failed. Please try again.');
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900">
-            {isLogin ? 'Welcome Back' : 'Join Campus Connect'}
+            {isVerifying ? 'Verify Your Email' : isLogin ? 'Welcome Back' : 'Join Campus Connect'}
           </h2>
           <p className="mt-2 text-gray-600">
-            {isLogin ? 'Sign in to your account' : 'Create your student account'}
+            {isVerifying
+              ? 'Enter the verification code from your email'
+              : isLogin
+                ? 'Sign in to your account'
+                : 'Create your student account'
+            }
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+        {isVerifying ? (
+          <div className="space-y-4">
+            <div>
+              <input
+                type="text"
+                placeholder="Enter verification token"
+                value={verificationToken}
+                onChange={(e) => setVerificationToken(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+            <button
+              onClick={handleVerifyEmail}
+              className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            >
+              Verify Email
+            </button>
+            <button
+              onClick={() => setIsVerifying(false)}
+              className="w-full text-purple-600 hover:text-purple-500"
+            >
+              Back to Registration
+            </button>
+          </div>
+        ) : (
+          <>
+            <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           {!isLogin && (
             <>
               <div>
@@ -156,7 +216,18 @@ export default function AuthForm({ onAuthSuccess }: AuthFormProps) {
           >
             {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
           </button>
-        </div>
+            </form>
+
+            <div className="text-center">
+              <button
+                onClick={() => setIsLogin(!isLogin)}
+                className="text-purple-600 hover:text-purple-500"
+              >
+                {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

@@ -81,67 +81,112 @@ npm run dev
 
 Visit `http://localhost:3000` to use the app!
 
-## Deployment Guide 🚀
+## Deployment Guide 🚀 (FREE Forever Options)
 
-### Option 1: Vercel + Railway (Recommended)
+### Option 1: Vercel + Oracle Cloud (FREE Forever - No Limits)
 
-#### 1. Database Setup (MongoDB Atlas)
+#### 1. Database Setup (MongoDB Atlas - FREE)
 1. Go to [MongoDB Atlas](https://www.mongodb.com/atlas)
-2. Create a free cluster
-3. Get your connection string
-4. Update `MONGODB_URI` in your environment variables
+2. Create FREE cluster (512MB storage, no time limits)
+3. Get your connection string: `mongodb+srv://...`
 
-#### 2. Backend Deployment (Railway)
-1. Go to [Railway.app](https://railway.app)
-2. Connect your GitHub repo
-3. Add environment variables:
+#### 2. Backend Deployment (Oracle Cloud Always Free)
+1. Go to [Oracle Cloud Free Tier](https://www.oracle.com/cloud/free/)
+2. Create account → Get FREE AMD-based VM (1GB RAM, no time limits!)
+3. SSH into your VM: `ssh ubuntu@your-vm-public-ip`
+4. Install dependencies:
+   ```bash
+   sudo apt update
+   sudo apt install nodejs npm mongodb
    ```
-   MONGODB_URI=your_mongodb_atlas_connection_string
-   JWT_SECRET=your_super_secret_jwt_key
+5. Clone and deploy:
+   ```bash
+   git clone https://github.com/yourusername/campus-connect.git
+   cd campus-connect/backend
+   npm install
+   npm run build
+   ```
+6. Configure environment in `backend/.env`:
+   ```
+   PORT=5000
+   MONGODB_URI=mongodb+srv://your-atlas-connection-string
+   JWT_SECRET=your_super_secret_jwt_key_here_make_it_long_and_random
    EMAIL_USER=your_email@gmail.com
    EMAIL_PASS=your_app_password
-   FRONTEND_URL=https://your-frontend-domain.vercel.app
+   FRONTEND_URL=https://your-frontend.vercel.app
    ```
-4. Deploy!
+7. Start server:
+   ```bash
+   npm start
+   ```
+8. Your backend URL: `http://your-oracle-vm-ip:5000`
 
-#### 3. Frontend Deployment (Vercel)
+#### 3. Frontend Deployment (Vercel - FREE)
 1. Go to [Vercel.com](https://vercel.com)
-2. Import your frontend folder from GitHub
+2. Import frontend folder from GitHub
 3. Add environment variable:
    ```
-   NEXT_PUBLIC_API_URL=https://your-backend-railway-url.up.railway.app
+   NEXT_PUBLIC_API_URL=http://your-oracle-vm-ip:5000
    ```
-4. Deploy!
+4. Deploy! (FREE forever, no bandwidth limits)
 
-### Option 2: Render + Vercel
+### Option 2: Self-Host Everything (FREE VPS)
 
-#### Backend on Render
-1. Go to [Render.com](https://render.com)
-2. Create a new Web Service
-3. Connect your backend repo
-4. Set build command: `npm run build`
-5. Set start command: `npm start`
-6. Add environment variables (same as Railway)
-7. Deploy!
+#### Alternative FREE VPS Options:
+- **Oracle Cloud**: 2 AMD VMs, 200GB storage, no time limits
+- **AWS Lightsail**: $3.50/month (not free but cheap)
+- **DigitalOcean Droplet**: $6/month (not free but cheap)
 
-#### Frontend on Vercel (same as above)
+#### Quick Self-Host Setup:
+```bash
+# On your VPS (Ubuntu/Debian)
+sudo apt update
+sudo apt install nodejs npm mongodb
+
+# Clone and setup
+git clone https://github.com/yourusername/campus-connect.git
+cd campus-connect
+
+# Backend setup
+cd backend
+npm install
+npm run build
+# Edit .env file with your settings
+npm start
+
+# Frontend setup (optional, can use Vercel)
+cd ../frontend
+npm install
+npm run build
+npm start
+```
 
 ### Environment Variables Summary
 
-#### Backend (Railway/Render)
-```
+#### Backend (Oracle Cloud/Free VPS)
+```env
 PORT=5000
-MONGODB_URI=mongodb+srv://...
-JWT_SECRET=your_jwt_secret
+MONGODB_URI=mongodb+srv://your-atlas-connection-string
+JWT_SECRET=your_super_secret_jwt_key_here_make_it_long_and_random
 EMAIL_USER=your_email@gmail.com
 EMAIL_PASS=your_app_password
-FRONTEND_URL=https://your-frontend-domain.vercel.app
+FRONTEND_URL=https://your-frontend.vercel.app
 ```
 
-#### Frontend (Vercel)
+#### Frontend (Vercel - FREE)
+```env
+NEXT_PUBLIC_API_URL=http://your-oracle-vm-public-ip:5000
 ```
-NEXT_PUBLIC_API_URL=https://your-backend-domain.com
-```
+
+## FREE Hosting Comparison
+
+| Service | Cost | Limits | Best For |
+|---------|------|--------|----------|
+| **Oracle Cloud** | FREE forever | 2 VMs, 200GB storage | Backend hosting |
+| **MongoDB Atlas** | FREE tier | 512MB storage | Database |
+| **Vercel** | FREE forever | Unlimited bandwidth | Frontend hosting |
+| **Railway** | Limited free | Sleeps after 1hr | Quick testing |
+| **Render** | Limited free | Sleeps after inactivity | Quick testing |
 
 ## API Endpoints 📡
 

@@ -40,7 +40,7 @@ const userSchema = new Schema<IUser>({
   coolVotes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   admirers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   admiredUsers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  admireCountThisWeek: { type: Number, default: 0 },
+  admireCountThisWeek: { type: Number, default: 0 }, // Kept for potential future use, but not enforced
   lastAdmireReset: { type: Date, default: Date.now },
   isVerified: { type: Boolean, default: false },
   verificationToken: { type: String }

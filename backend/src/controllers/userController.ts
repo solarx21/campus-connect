@@ -138,9 +138,10 @@ export const admireUser = async (req: AuthRequest, res: Response) => {
       admirer.lastAdmireReset = now;
     }
 
-    if (admirer.admireCountThisWeek >= 3) {
-      return res.status(400).json({ message: 'Weekly admire limit reached' });
-    }
+    // Remove weekly limit for scalability - allow unlimited admirations
+    // if (admirer.admireCountThisWeek >= 3) {
+    //   return res.status(400).json({ message: 'Weekly admire limit reached' });
+    // }
 
     const userIdObj = userId as any;
     if (admirer.admiredUsers.some(id => id.toString() === userId)) {
@@ -148,7 +149,8 @@ export const admireUser = async (req: AuthRequest, res: Response) => {
     }
 
     admirer.admiredUsers.push(userIdObj);
-    admirer.admireCountThisWeek += 1;
+    // Remove weekly count limit for scalability
+    // admirer.admireCountThisWeek += 1;
     await admirer.save();
 
     // Check for mutual admiration
